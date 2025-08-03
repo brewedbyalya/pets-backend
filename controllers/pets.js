@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     const foundPets = await Pet.find();
     res.json(foundPets);
 } catch (err) {
-    res.status(500).json({ err: err.message });
+     res.json({ msg: err.message });
   }
 });
 
@@ -20,9 +20,67 @@ router.post('/', async (req,res) => {
     const createdPet = await Pet.create(req.body)
     res.json(createdPet); }
     catch (err) {
-    res.status(500).json({ err: err.message });
+   const message = {msg: err.message};
+   res.json(message)
   }
 });
+
+// show one pet
+router.get('/:petId', async (req, res)=> {
+    try { const foundPet = await Pet.findById(req.params.petId);
+
+        if (!foundPet){
+            res.status(404);
+            throw new Error('Pet not found.')
+        }
+
+        res.status(500).json(foundPet)
+    }
+    catch (err) {
+        if (res.statusCode === 404) {
+            res.json({msg: err.message})
+        }
+        res.json({msg: err.message})
+}
+}
+)
+
+// delete single pet
+router.delete('/:petId', async (req, res)=> {
+    try { 
+        const deletedPet = await Pet.findByIdAndDelete(req.params.petId);
+
+    if (!deletedPet){
+            res.status(404);
+            throw new Error('Pet not found.')
+        }
+
+          res.status(200).json(deletedPet);
+    }
+    catch (err) {
+        if (res.statusCode === 404) {
+            res.json({msg: err.message})
+        }
+        res.json({msg: err.message})
+}
+}
+)
+
+// update
+router.put('/:petId', async (req, res) => {
+try {
+    const updatePet = await Pet.findByIdAndUpdate(req.params.petId, req.body);
+    res.json(updatePet)
+    res.json({})
+}
+catch (err) {
+        if (res.statusCode === 404) {
+            res.json({msg: err.message})
+        }
+        res.json({msg: err.message})
+}
+}
+)
 
 
 module.exports = router;
