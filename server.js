@@ -4,8 +4,10 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const logger = require('morgan');
+const cors = require('cors');
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 app.use(logger('dev'));
 

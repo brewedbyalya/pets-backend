@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const foundPets = await Pet.find();
-    res.json(foundPets);
+    res.status(200).res.json(foundPets);
 } catch (err) {
      res.json({ msg: err.message });
   }
@@ -17,8 +17,8 @@ router.get('/', async (req, res) => {
 // post
 router.post('/', async (req,res) => {
    try {
-    const createdPet = await Pet.create(req.body)
-    res.json(createdPet); }
+    const createdPet = await Pet.create(req.body);
+    res.status(200).res.json(createdPet); }
     catch (err) {
    const message = {msg: err.message};
    res.json(message)
@@ -69,15 +69,20 @@ router.delete('/:petId', async (req, res)=> {
 // update
 router.put('/:petId', async (req, res) => {
 try {
-    const updatePet = await Pet.findByIdAndUpdate(req.params.petId, req.body);
-    res.json(updatePet)
-    res.json({})
+    const updatedPet = await Pet.findByIdAndUpdate(req.params.petId, req.body,{new: true});
+
+    if (updatedPet) {
+        res.status(404)
+        throw new Error('Pet not found.');
+    }
+
+    res.status(200).res.json(updatedPet);
 }
 catch (err) {
         if (res.statusCode === 404) {
-            res.json({msg: err.message})
+            res.json({msg: err.message});
         }
-        res.json({msg: err.message})
+        res.json({msg: err.message});
 }
 }
 )
